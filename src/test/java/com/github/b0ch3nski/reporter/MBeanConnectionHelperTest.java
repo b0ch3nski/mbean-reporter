@@ -5,10 +5,11 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.management.*;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.github.b0ch3nski.reporter.MBeanConnectionHelper.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 
 public class MBeanConnectionHelperTest {
     @Rule
@@ -21,11 +22,12 @@ public class MBeanConnectionHelperTest {
                 "Count", "long", "Attribute exposed for management", true, false, false);
 
         // when
-        MBeanAttributeInfo[] actual = getMBeanAttributeInfos(testRule.getMeterObjName());
+        Stream<MBeanAttributeInfo> actual = getMBeanAttributeInfos(testRule.getMeterObjName());
 
         // then
-        assertThat(actual).hasSize(6);
-        assertThat(actual[0]).isEqualTo(expected);
+        assertThat(actual)
+                .hasSize(6)
+                .first().isEqualTo(expected);
     }
 
     @Test
@@ -35,12 +37,12 @@ public class MBeanConnectionHelperTest {
 
         // when
         testRule.getMeter().mark(meterValue);
-        Object actual = getMBeanAttributeValue(testRule.getMeterObjName(), "Count");
+        Optional<Object> actual = getMBeanAttributeValue(testRule.getMeterObjName(), "Count");
 
         // then
         assertThat(actual)
-                .isInstanceOf(Long.class)
-                .isEqualTo(meterValue);
+                .isPresent()
+                .hasValue(meterValue);
     }
 
     @Test
@@ -48,12 +50,12 @@ public class MBeanConnectionHelperTest {
         // given
         ObjectName badObjName = new ObjectName("i.cause:type=problems,name=and-troubles");
 
-        // expect
-        Throwable thrownForAttr = catchThrowable(() -> getMBeanAttributeInfos(badObjName));
-        Throwable thrownForValue = catchThrowable(() -> getMBeanAttributeValue(badObjName, "pancake"));
-
         // when
-        assertThat(thrownForAttr).isInstanceOf(MBeanConnectionException.class);
-        assertThat(thrownForValue).isInstanceOf(MBeanConnectionException.class);
+        Stream<MBeanAttributeInfo> actualAttrInfo = getMBeanAttributeInfos(badObjName);
+        Optional<Object> actualValue = getMBeanAttributeValue(badObjName, "nope");
+
+        // then
+        assertThat(actualAttrInfo).isEmpty();
+        assertThat(actualValue).isNotPresent();
     }
 }

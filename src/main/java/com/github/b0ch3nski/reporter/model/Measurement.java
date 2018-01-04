@@ -8,8 +8,8 @@ import java.util.stream.Stream;
 
 public final class Measurement {
     private final String name;
-    private final String type;
-    private final Object value;
+    private final Class<?> type;
+    private final String value;
 
     private Measurement(MeasurementBuilder builder) {
         name = builder.name;
@@ -29,11 +29,11 @@ public final class Measurement {
         return name;
     }
 
-    public String getType() {
+    public Class<?> getType() {
         return type;
     }
 
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -54,7 +54,7 @@ public final class Measurement {
 
     @Override
     public String toString() {
-        return String.format("%s = [%s] %s", name, type, value);
+        return String.format("%s = [%s] %s", name, type.getSimpleName(), value);
     }
 
     public static final class MeasurementBuilder {
@@ -62,8 +62,8 @@ public final class Measurement {
         private static final String NAME_SEPARATOR = ".";
 
         private String name;
-        private String type;
-        private Object value;
+        private Class<?> type;
+        private String value;
 
         private MeasurementBuilder() { }
 
@@ -92,13 +92,9 @@ public final class Measurement {
             return this;
         }
 
-        public MeasurementBuilder withType(String attrType) {
-            type = attrType;
-            return this;
-        }
-
         public MeasurementBuilder withValue(Object attrValue) {
-            value = attrValue;
+            type = attrValue.getClass();
+            value = String.valueOf(attrValue);
             return this;
         }
 

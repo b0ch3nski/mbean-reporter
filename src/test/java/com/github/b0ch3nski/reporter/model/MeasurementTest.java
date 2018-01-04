@@ -11,23 +11,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeasurementTest {
 
     @Test
-    public void shouldBuildSimpleMeasurement() throws MalformedObjectNameException {
+    public void shouldBuildSimpleMeasurement() {
         // given
         String name = "testName";
-        String type = "testType";
         Integer value = 123;
 
         // when
         Measurement measurement = Measurement.builder()
                 .withName(null, name)
-                .withType(type)
                 .withValue(value)
                 .build();
 
         // then
         assertThat(measurement.getName()).isEqualTo(name);
-        assertThat(measurement.getType()).isEqualTo(type);
-        assertThat(measurement.getValue()).isEqualTo(value);
+        assertThat(measurement.getType()).isEqualTo(value.getClass());
+        assertThat(measurement.getValue()).isEqualTo(String.valueOf(value));
         assertThat(measurement.asStream().count()).isEqualTo(1);
     }
 

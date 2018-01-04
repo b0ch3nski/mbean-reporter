@@ -4,7 +4,8 @@ import com.github.b0ch3nski.reporter.model.Measurement;
 
 import javax.management.MBeanAttributeInfo;
 import javax.management.ObjectName;
-import javax.management.openmbean.*;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -27,20 +28,11 @@ final class MBeanProcessingHelper {
 
     private MBeanProcessingHelper() { }
 
-    private static String getCompDataAttrType(String attrType) {
-        return Object.class.getName().equals(attrType)
-                ? "long"
-                : attrType;
-    }
-
     private static Stream<Measurement> buildMeasuresFromCompData(ObjectName mBeanName, String attrName, CompositeData compData) {
-        CompositeType compType = compData.getCompositeType();
-
-        return compType.keySet().stream()
+        return compData.getCompositeType().keySet().stream()
                 .map(key ->
                         Measurement.builder()
                                 .withName(mBeanName, attrName, key)
-                                .withType(getCompDataAttrType(compType.getTypeName()))
                                 .withValue(compData.get(key))
                                 .build()
                 );
@@ -58,7 +50,6 @@ final class MBeanProcessingHelper {
         else
             return Measurement.builder()
                     .withName(mBeanName, attrName)
-                    .withType(attribute.getType())
                     .withValue(attrValue)
                     .build().asStream();
     }

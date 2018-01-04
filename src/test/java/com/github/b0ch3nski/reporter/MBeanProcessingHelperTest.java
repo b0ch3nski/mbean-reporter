@@ -23,7 +23,6 @@ public class MBeanProcessingHelperTest {
 
         Measurement expected = Measurement.builder()
                 .withName(testRule.getMeterObjName(), "Count")
-                .withType("long")
                 .withValue(meterValue)
                 .build();
 

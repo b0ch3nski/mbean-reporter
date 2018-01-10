@@ -5,25 +5,20 @@ import com.github.b0ch3nski.reporter.model.Measurement;
 import javax.management.MBeanAttributeInfo;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 final class MBeanProcessingHelper {
-
+    private static final String INVALID_ATTR_NAME = "UsageThreshold";
     private static final List<String> VALID_ATTR_TYPES =
-            Arrays.asList("double", "long", Object.class.getName(), CompositeData.class.getName());
-
-    private static final List<String> INVALID_ATTR_NAME_PARTS =
-            Arrays.asList("UsageThreshold", "LastGcInfo");
+            Arrays.asList("int", "long", "double", CompositeData.class.getName());
 
     private static final Predicate<MBeanAttributeInfo> MBEAN_ATTR_PREDICATE =
             attribute -> (
                     attribute.isReadable()
+                            && !attribute.getName().contains(INVALID_ATTR_NAME)
                             && VALID_ATTR_TYPES.contains(attribute.getType())
-                            && INVALID_ATTR_NAME_PARTS.stream()
-                            .noneMatch(name -> attribute.getName().contains(name))
             );
 
     private MBeanProcessingHelper() { }
@@ -45,8 +40,9 @@ final class MBeanProcessingHelper {
         if (!optionalAttrValue.isPresent()) return Stream.empty();
         Object attrValue = optionalAttrValue.get();
 
-        if (attrValue instanceof CompositeDataSupport)
-            return buildMeasuresFromCompData(mBeanName, attrName, (CompositeDataSupport) attrValue);
+        // values of type TabularData and arrays aren't supported as they don't carry any useful metrics
+        if (attrValue instanceof CompositeData)
+            return buildMeasuresFromCompData(mBeanName, attrName, (CompositeData) attrValue);
         else
             return Measurement.builder()
                     .withName(mBeanName, attrName)

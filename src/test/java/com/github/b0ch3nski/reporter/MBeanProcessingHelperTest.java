@@ -2,11 +2,12 @@ package com.github.b0ch3nski.reporter;
 
 import com.github.b0ch3nski.reporter.model.Measurement;
 import com.github.b0ch3nski.reporter.utils.MetricsTestRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.b0ch3nski.reporter.MBeanProcessingHelper.getMBeanAsMeasurements;
@@ -46,5 +47,19 @@ public class MBeanProcessingHelperTest {
 
         // then
         assertThat(actual).isEmpty();
+    }
+
+    @Test
+    @Ignore
+    public void printAllMBeansAsMeasurements() {
+        List<Measurement> measurementList = MBeanProcessingHelper.getAllMBeansAsMeasurements()
+                .collect(Collectors.toList());
+
+        String measurements = measurementList.stream()
+                .map(Measurement::toString)
+                .collect(Collectors.joining("\n"));
+
+        System.out.println(String.format(
+                "Got %s measurements:\n%s", measurementList.size(), measurements));
     }
 }

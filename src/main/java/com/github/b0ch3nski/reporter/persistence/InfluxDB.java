@@ -11,19 +11,26 @@ import java.util.stream.Stream;
 
 public class InfluxDB implements MetricsDatabase {
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDB.class);
-    private final String influxUrl;
-    private final String dbName;
+    private String dbUrl = "http://localhost:8086";
+    private String dbName = "test";
 
-    public InfluxDB(String influxUrl, String dbName) {
-        this.influxUrl = influxUrl;
+    @Override
+    public MetricsDatabase setDbUrl(String dbUrl) {
+        this.dbUrl = dbUrl;
+        return this;
+    }
+
+    @Override
+    public MetricsDatabase setDbName(String dbName) {
         this.dbName = dbName;
+        return this;
     }
 
     @Override
     public void createDatabase() {
         try {
             HttpRequest
-                    .post(influxUrl + "/query")
+                    .post(dbUrl + "/query")
                     .withPayload(("q=CREATE DATABASE " + dbName))
                     .expectCode(200);
         } catch (IOException e) {
@@ -43,7 +50,7 @@ public class InfluxDB implements MetricsDatabase {
 
         try {
             HttpRequest
-                    .post(influxUrl + "/write?db=" + dbName)
+                    .post(dbUrl + "/write?db=" + dbName)
                     .withPayload(payload)
                     .expectCode(204);
         } catch (IOException e) {

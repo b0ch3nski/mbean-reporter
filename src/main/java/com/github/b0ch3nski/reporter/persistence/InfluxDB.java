@@ -48,6 +48,8 @@ public class InfluxDB implements MetricsDatabase {
                 .map(InfluxDB::convert)
                 .collect(Collectors.joining("\n"));
 
+        LOG.trace("Sending payload to InfluxDB:\n{}", payload);
+
         try {
             HttpRequest
                     .post(dbUrl + "/write?db=" + dbName)

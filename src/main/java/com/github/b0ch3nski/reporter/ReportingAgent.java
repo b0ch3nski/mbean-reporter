@@ -1,6 +1,7 @@
 package com.github.b0ch3nski.reporter;
 
-import com.github.b0ch3nski.reporter.persistence.*;
+import com.github.b0ch3nski.reporter.persistence.MetricsDatabase;
+import com.github.b0ch3nski.reporter.persistence.MetricsDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,13 +17,13 @@ public final class ReportingAgent {
 
     static {
         // TODO: implement configuration handling
-        Class<?> dbImpl = InfluxDB.class;
+        String dbImpl = "com.github.b0ch3nski.reporter.persistence.InfluxDB";
         String dbUrl = "http://localhost:8086";
         String dbName = "test";
 
         Optional<MetricsDatabase> database = MetricsDatabaseService.getInstance().getDatabase(dbImpl);
         if (!database.isPresent())
-            LOG.warn("Unable to find 'MetricsDatabase' implementation={}", dbImpl.getSimpleName());
+            LOG.warn("Unable to find 'MetricsDatabase' implementation={}", dbImpl);
 
         METRICS_DB = database.get()
                 .setDbUrl(dbUrl)

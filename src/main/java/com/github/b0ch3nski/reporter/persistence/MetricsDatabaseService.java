@@ -23,9 +23,15 @@ public final class MetricsDatabaseService {
         return service;
     }
 
-    public Optional<MetricsDatabase> getDatabase(Class<?> cls) {
-        return implementations.stream()
-                .filter(impl -> Objects.equals(impl.getClass(), cls))
-                .findAny();
+    public Optional<MetricsDatabase> getDatabase(String className) {
+        try {
+            Class<?> cls = Class.forName(className);
+            return implementations.stream()
+                    .filter(impl -> Objects.equals(impl.getClass(), cls))
+                    .findAny();
+        } catch (ClassNotFoundException ignored) {
+            LOG.warn("Classpath doesn't contain requested class={}", className);
+            return Optional.empty();
+        }
     }
 }

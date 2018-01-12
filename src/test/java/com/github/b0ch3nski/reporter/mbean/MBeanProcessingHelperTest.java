@@ -1,4 +1,4 @@
-package com.github.b0ch3nski.reporter;
+package com.github.b0ch3nski.reporter.mbean;
 
 import com.github.b0ch3nski.reporter.model.Measurement;
 import com.github.b0ch3nski.reporter.utils.MetricsTestRule;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.b0ch3nski.reporter.MBeanProcessingHelper.getMBeanAsMeasurements;
+import static com.github.b0ch3nski.reporter.mbean.MBeanProcessingHelper.getMBeanAsMeasurements;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MBeanProcessingHelperTest {

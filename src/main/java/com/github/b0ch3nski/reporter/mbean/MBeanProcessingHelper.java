@@ -1,4 +1,4 @@
-package com.github.b0ch3nski.reporter;
+package com.github.b0ch3nski.reporter.mbean;
 
 import com.github.b0ch3nski.reporter.model.Measurement;
 
@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-final class MBeanProcessingHelper {
+public final class MBeanProcessingHelper {
     private static final String INVALID_ATTR_NAME = "UsageThreshold";
     private static final List<String> VALID_ATTR_TYPES =
             Arrays.asList("int", "long", "double", CompositeData.class.getName());
@@ -56,7 +56,7 @@ final class MBeanProcessingHelper {
                 .flatMap(attribute -> buildMeasurements(mBeanName, attribute));
     }
 
-    static Stream<Measurement> getAllMBeansAsMeasurements() {
+    public static Stream<Measurement> getAllMBeansAsMeasurements() {
         return MBeanConnectionHelper.getAllMBeans()
                 .flatMap(mBean -> getMBeanAsMeasurements(mBean.getObjectName()));
     }

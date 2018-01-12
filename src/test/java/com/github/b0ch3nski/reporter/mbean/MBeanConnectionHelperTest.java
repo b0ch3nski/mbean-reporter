@@ -1,4 +1,4 @@
-package com.github.b0ch3nski.reporter;
+package com.github.b0ch3nski.reporter.mbean;
 
 import com.github.b0ch3nski.reporter.utils.MetricsTestRule;
 import org.junit.Rule;
@@ -8,7 +8,7 @@ import javax.management.*;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.github.b0ch3nski.reporter.MBeanConnectionHelper.*;
+import static com.github.b0ch3nski.reporter.mbean.MBeanConnectionHelper.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MBeanConnectionHelperTest {

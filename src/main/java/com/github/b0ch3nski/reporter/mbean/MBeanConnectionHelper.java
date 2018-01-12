@@ -1,4 +1,4 @@
-package com.github.b0ch3nski.reporter;
+package com.github.b0ch3nski.reporter.mbean;
 
 import javax.management.*;
 import java.io.IOException;

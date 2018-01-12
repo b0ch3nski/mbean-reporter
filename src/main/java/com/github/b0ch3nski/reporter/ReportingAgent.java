@@ -1,5 +1,6 @@
 package com.github.b0ch3nski.reporter;
 
+import com.github.b0ch3nski.reporter.mbean.MBeanProcessingHelper;
 import com.github.b0ch3nski.reporter.persistence.MetricsDatabase;
 import com.github.b0ch3nski.reporter.persistence.MetricsDatabaseService;
 import org.slf4j.Logger;

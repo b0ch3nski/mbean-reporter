@@ -6,10 +6,6 @@ import java.util.stream.Stream;
 
 public interface MetricsDatabase {
 
-    MetricsDatabase setDbUrl(String dbUrl);
-
-    MetricsDatabase setDbName(String dbName);
-
     void createDatabase();
 
     void sendMeasurements(Stream<Measurement> measurements);

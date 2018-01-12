@@ -2,13 +2,13 @@ package com.github.b0ch3nski.reporter;
 
 import com.github.b0ch3nski.reporter.mbean.MBeanProcessingHelper;
 import com.github.b0ch3nski.reporter.persistence.MetricsDatabase;
-import com.github.b0ch3nski.reporter.persistence.MetricsDatabaseService;
+import com.github.b0ch3nski.reporter.services.ConfigService;
+import com.github.b0ch3nski.reporter.services.MetricsDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
-import java.util.Optional;
 import java.util.concurrent.*;
 
 public final class ReportingAgent {
@@ -17,18 +17,12 @@ public final class ReportingAgent {
     private static final MetricsDatabase METRICS_DB;
 
     static {
-        // TODO: implement configuration handling
-        String dbImpl = "com.github.b0ch3nski.reporter.persistence.InfluxDB";
-        String dbUrl = "http://localhost:8086";
-        String dbName = "test";
-
-        Optional<MetricsDatabase> database = MetricsDatabaseService.getInstance().getDatabase(dbImpl);
-        if (!database.isPresent())
-            LOG.warn("Unable to find 'MetricsDatabase' implementation={}", dbImpl);
-
-        METRICS_DB = database.get()
-                .setDbUrl(dbUrl)
-                .setDbName(dbName);
+        String defDbImpl = "com.github.b0ch3nski.reporter.persistence.InfluxDB";
+        METRICS_DB =
+                MetricsDatabaseService.getInstance().getDatabase(
+                        ConfigService.getInstance().getValue("dbImpl", defDbImpl),
+                        defDbImpl
+                );
     }
 
     private ReportingAgent() { }

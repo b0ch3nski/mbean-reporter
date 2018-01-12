@@ -2,6 +2,7 @@ package com.github.b0ch3nski.reporter.persistence;
 
 import com.github.b0ch3nski.reporter.http.HttpRequest;
 import com.github.b0ch3nski.reporter.model.Measurement;
+import com.github.b0ch3nski.reporter.services.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,19 +12,13 @@ import java.util.stream.Stream;
 
 public class InfluxDB implements MetricsDatabase {
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDB.class);
-    private String dbUrl = "http://localhost:8086";
-    private String dbName = "test";
+    private final String dbUrl;
+    private final String dbName;
 
-    @Override
-    public MetricsDatabase setDbUrl(String dbUrl) {
-        this.dbUrl = dbUrl;
-        return this;
-    }
-
-    @Override
-    public MetricsDatabase setDbName(String dbName) {
-        this.dbName = dbName;
-        return this;
+    public InfluxDB() {
+        ConfigService config = ConfigService.getInstance();
+        dbUrl = config.getValue("dbUrl", "http://localhost:8086");
+        dbName = config.getValue("dbName", "test");
     }
 
     @Override

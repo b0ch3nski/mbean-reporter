@@ -1,0 +1,44 @@
+allprojects {
+    group = 'com.github.b0ch3nski'
+    version = '0.1'
+}
+
+subprojects {
+    apply plugin: 'project-report'
+    apply from: "${rootDir}/libraries.gradle"
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    plugins.withType(JavaPlugin) {
+        tasks.withType(JavaCompile) {
+            sourceCompatibility = 1.8
+            targetCompatibility = 1.8
+            options.encoding = 'UTF-8'
+            options.compilerArgs \
+                << "-Xlint:all" \
+                << "-Werror"
+        }
+
+        test {
+            testLogging {
+                events "failed"
+                showExceptions true
+                exceptionFormat "full"
+                showCauses true
+                showStackTraces true
+                showStandardStreams true
+            }
+        }
+
+        dependencies {
+            compileOnly libraries.slf4j
+
+            testCompile libraries.logback
+            testCompile libraries.junit
+            testCompile libraries.assertj
+        }
+    }
+}

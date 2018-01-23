@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+description = 'mbean-reporter :: agent'
+
+dependencies {
+    compileOnly project(':api')
+
+    testCompile project(':api')
+    testCompile libraries.metrics
+}
+
+jar {
+    manifest {
+        attributes(
+                'Premain-Class': 'com.github.b0ch3nski.reporter.ReportingAgent',
+                'Specification-Title': project(':api').name,
+                'Specification-Version': project(':api').version,
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
+    }
+}

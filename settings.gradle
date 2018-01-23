@@ -1,0 +1,6 @@
+rootProject.name = 'mbean-reporter'
+
+include ':agent'
+include ':api'
+include ':impl:influxdb'
+include ':testapp'

@@ -1,0 +1,10 @@
+ext {
+    libraries = [
+            slf4j         : "org.slf4j:slf4j-api:1.7.25",
+            logback       : "ch.qos.logback:logback-classic:1.2.3",
+            metrics       : "io.dropwizard.metrics:metrics-core:3.2.5",
+            junit         : "junit:junit:4.12",
+            assertj       : "org.assertj:assertj-core:3.8.0",
+            equalsverifier: "nl.jqno.equalsverifier:equalsverifier:2.4"
+    ]
+}

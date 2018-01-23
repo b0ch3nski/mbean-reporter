@@ -18,15 +18,15 @@ public class InfluxDB implements MetricsDatabase {
     public InfluxDB() {
         ConfigService config = ConfigService.getInstance();
         dbUrl = config.getValue("dbUrl", "http://localhost:8086");
-        dbName = config.getValue("dbName", "test");
+        dbName = config.getValue("dbName", "jvm-metrics");
     }
 
     @Override
     public void createDatabase() {
         try {
             HttpRequest
-                    .post(dbUrl + "/query")
-                    .withPayload(("q=CREATE DATABASE " + dbName))
+                    .post(String.format("%s/query", dbUrl))
+                    .withPayload(String.format("q=CREATE DATABASE \"%s\"", dbName))
                     .expectCode(200);
         } catch (IOException e) {
             LOG.warn("Failed to create InfluxDB database name={}, cause={}", dbName, e.getMessage());
@@ -47,7 +47,7 @@ public class InfluxDB implements MetricsDatabase {
 
         try {
             HttpRequest
-                    .post(dbUrl + "/write?db=" + dbName)
+                    .post(String.format("%s/write?db=%s", dbUrl, dbName))
                     .withPayload(payload)
                     .expectCode(204);
         } catch (IOException e) {

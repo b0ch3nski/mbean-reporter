@@ -1,5 +1,8 @@
 package com.github.b0ch3nski.reporter.mbean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.management.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -8,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 final class MBeanConnectionHelper {
+    private static final Logger LOG = LoggerFactory.getLogger(MBeanConnectionHelper.class);
     private static final MBeanServerConnection CONNECTION = ManagementFactory.getPlatformMBeanServer();
 
     private MBeanConnectionHelper() { }
@@ -17,7 +21,8 @@ final class MBeanConnectionHelper {
             return Arrays.stream(
                     CONNECTION.getMBeanInfo(mBeanName).getAttributes()
             );
-        } catch (JMException | IOException ignored) {
+        } catch (JMException | IOException e) {
+            LOG.warn("Failed to get attribute info for MBean={}, cause={}", mBeanName, e.getMessage());
             return Stream.empty();
         }
     }
@@ -27,7 +32,8 @@ final class MBeanConnectionHelper {
             return Optional.ofNullable(
                     CONNECTION.getAttribute(mBeanName, attrName)
             );
-        } catch (JMException | IOException ignored) {
+        } catch (JMException | IOException e) {
+            LOG.warn("Failed to get value of attribute={} for MBean={}, cause={}", attrName, mBeanName, e.getMessage());
             return Optional.empty();
         }
     }
@@ -36,7 +42,8 @@ final class MBeanConnectionHelper {
         try {
             return CONNECTION.queryMBeans(null, null)
                     .parallelStream();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            LOG.warn("Failed to query MBeans, cause={}", e.getMessage());
             return Stream.empty();
         }
     }

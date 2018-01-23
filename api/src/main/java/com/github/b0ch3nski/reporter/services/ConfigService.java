@@ -49,4 +49,12 @@ public final class ConfigService {
     public String getValue(String key, String defVal) {
         return config.getOrDefault(key.toLowerCase(), defVal);
     }
+
+    public long getValue(String key, long defVal) {
+        try {
+            return Long.valueOf(config.get(key.toLowerCase()));
+        } catch (NumberFormatException ignored) {
+            return defVal;
+        }
+    }
 }

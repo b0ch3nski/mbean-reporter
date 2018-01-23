@@ -9,18 +9,19 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public final class ReportingAgent {
     private static final Logger LOG = LoggerFactory.getLogger(ReportingAgent.class);
-    private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor();
+    private static final ConfigService CFG = ConfigService.getInstance();
     private static final MetricsDatabase METRICS_DB;
 
     static {
         String defDbImpl = "com.github.b0ch3nski.reporter.persistence.InfluxDB";
         METRICS_DB =
                 MetricsDatabaseService.getInstance().getDatabase(
-                        ConfigService.getInstance().getValue("dbImpl", defDbImpl),
+                        CFG.getValue("dbImpl", defDbImpl),
                         defDbImpl
                 );
     }
@@ -34,9 +35,14 @@ public final class ReportingAgent {
     }
 
     public static void premain(String args, Instrumentation inst) {
-        LOG.info("mbean-reporter attached to JVM={}", ManagementFactory.getRuntimeMXBean().getName());
+        long interval = CFG.getValue("interval", 10);
+
+        LOG.info("mbean-reporter attached to JVM={} with send interval={} seconds",
+                ManagementFactory.getRuntimeMXBean().getName(),
+                interval);
 
         METRICS_DB.createDatabase();
-        EXECUTOR.scheduleAtFixedRate(ReportingAgent::send, 0, 10, TimeUnit.SECONDS);
+        Executors.newSingleThreadScheduledExecutor()
+                .scheduleAtFixedRate(ReportingAgent::send, 0, interval, TimeUnit.SECONDS);
     }
 }

@@ -43,7 +43,8 @@ public final class MetricsDatabaseService {
             LOG.info("Using 'MetricsDatabase' implementation={}", reqClassName);
             return reqImpl.get();
         } else {
-            LOG.warn("Unable to find 'MetricsDatabase' implementation={} falling back to default={}", reqClassName, defClassName);
+            LOG.warn("Unable to find 'MetricsDatabase' implementation={} falling back to default={}",
+                    reqClassName, defClassName);
             return getDatabase(defClassName).get();
         }
     }

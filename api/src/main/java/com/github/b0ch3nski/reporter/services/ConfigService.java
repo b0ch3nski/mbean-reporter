@@ -3,6 +3,8 @@ package com.github.b0ch3nski.reporter.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
@@ -35,8 +37,21 @@ public final class ConfigService {
                 );
     }
 
+    private static String getHostName() {
+        try {
+            return Optional
+                    .ofNullable(System.getenv("HOSTNAME"))
+                    .orElse(InetAddress.getLocalHost().getCanonicalHostName());
+        } catch (UnknownHostException e) {
+            LOG.warn("Failed to read hostname, cause={}", e.getMessage());
+            return "unknown";
+        }
+    }
+
     private ConfigService() {
         config = fromEnvAndProps(System::getenv, System::getProperties);
+        config.put("hostname", getHostName());
+
         LOG.debug("Loaded configuration={}", config);
     }
 

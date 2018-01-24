@@ -12,11 +12,13 @@ import java.util.stream.Stream;
 
 public class InfluxDB implements MetricsDatabase {
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDB.class);
+    private final String hostName;
     private final String dbUrl;
     private final String dbName;
 
     public InfluxDB() {
         ConfigService config = ConfigService.getInstance();
+        hostName = config.getValue("hostName", "unknown");
         dbUrl = config.getValue("dbUrl", "http://localhost:8086");
         dbName = config.getValue("dbName", "jvm-metrics");
     }
@@ -33,14 +35,15 @@ public class InfluxDB implements MetricsDatabase {
         }
     }
 
-    private static String convert(Measurement measurement) {
-        return String.format("%s,host=TEST value=%s", measurement.getName(), measurement.getValue());
+    private String convert(Measurement measurement) {
+        return String.format("%s,host=%s value=%s",
+                measurement.getName(), hostName, measurement.getValue());
     }
 
     @Override
     public void sendMeasurements(Stream<Measurement> measurements) {
         String payload = measurements
-                .map(InfluxDB::convert)
+                .map(this::convert)
                 .collect(Collectors.joining("\n"));
 
         LOG.trace("Sending payload to InfluxDB:\n{}", payload);

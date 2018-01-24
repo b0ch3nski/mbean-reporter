@@ -10,15 +10,19 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public final class MBeanProcessingHelper {
-    private static final String INVALID_ATTR_NAME = "UsageThreshold";
+
     private static final List<String> VALID_ATTR_TYPES =
             Arrays.asList("int", "long", "double", CompositeData.class.getName());
+
+    private static final List<String> INVALID_ATTR_NAME_PARTS =
+            Arrays.asList("UsageThreshold", "LastGcInfo");
 
     private static final Predicate<MBeanAttributeInfo> MBEAN_ATTR_PREDICATE =
             attribute -> (
                     attribute.isReadable()
-                            && !attribute.getName().contains(INVALID_ATTR_NAME)
                             && VALID_ATTR_TYPES.contains(attribute.getType())
+                            && INVALID_ATTR_NAME_PARTS.stream()
+                            .noneMatch(badPart -> attribute.getName().contains(badPart))
             );
 
     private MBeanProcessingHelper() { }

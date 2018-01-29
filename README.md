@@ -8,8 +8,8 @@ gradle clean build
 ## run testapp
 ```bash
 java \
--javaagent:agent/build/libs/agent-0.1.jar \
--cp testapp/build/libs/testapp-0.1-all.jar:api/build/libs/api-0.1.jar:impl/influxdb/build/libs/influxdb-0.1.jar \
+-javaagent:agent/build/libs/mbean-reporter-agent-0.1.jar \
+-cp testapp/build/libs/mbean-reporter-testapp-0.1.jar:api/build/libs/mbean-reporter-api-0.1.jar:impl/influxdb/build/libs/mbean-reporter-influxdb-0.1.jar \
 -DrootLogLevel=DEBUG \
 -Dreporter.dbName=jvm-metrics-test \
 -Dcom.sun.management.jmxremote \

@@ -1,6 +1,12 @@
+import java.text.SimpleDateFormat
+
 allprojects {
     group = 'com.github.b0ch3nski'
-    version = '0.1'
+    version = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date())
+
+    if (project.hasProperty('build.type') && project.property('build.type') == 'release') {
+        version = file("${rootDir}/VERSION").text.trim()
+    }
 }
 
 subprojects {
@@ -16,6 +22,7 @@ subprojects {
         tasks.withType(JavaCompile) {
             sourceCompatibility = 1.8
             targetCompatibility = 1.8
+            options.fork = true
             options.encoding = 'UTF-8'
             options.compilerArgs \
                 << "-Xlint:all" \
@@ -31,6 +38,10 @@ subprojects {
                 showStackTraces true
                 showStandardStreams true
             }
+        }
+
+        jar {
+            baseName = rootProject.name + '-' + project.name
         }
 
         dependencies {

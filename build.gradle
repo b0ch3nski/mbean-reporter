@@ -2,15 +2,14 @@ import java.text.SimpleDateFormat
 
 allprojects {
     group = 'com.github.b0ch3nski'
-    version = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date())
-
-    if (project.hasProperty('build.type') && project.property('build.type') == 'release') {
-        version = file("${rootDir}/VERSION").text.trim()
-    }
+    version = isBuildType('release') ?
+            file("${rootDir}/VERSION").text.trim() :
+            new SimpleDateFormat("yyyyMMddhhmmss").format(new Date())
 }
 
 subprojects {
     apply plugin: 'project-report'
+    apply plugin: 'jacoco'
     apply from: "${rootDir}/libraries.gradle"
 
     repositories {
@@ -40,9 +39,27 @@ subprojects {
             }
         }
 
-        jar {
+        jar.baseName = rootProject.name + '-' + project.name
+
+        task sourcesJar(type: Jar, dependsOn: classes) {
             baseName = rootProject.name + '-' + project.name
+            classifier = 'sources'
+            from sourceSets.main.allSource
         }
+
+        javadoc.failOnError = true
+
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            baseName = rootProject.name + '-' + project.name
+            classifier = 'javadoc'
+            from javadoc
+        }
+
+        if (isBuildType('release')) build.dependsOn sourcesJar, javadocJar
+
+        jacoco.toolVersion = '0.7.9'
+
+        if (isBuildType('ci')) build.dependsOn jacocoTestReport, dependencyReport
 
         dependencies {
             compileOnly libraries.slf4j
@@ -52,4 +69,8 @@ subprojects {
             testCompile libraries.assertj
         }
     }
+}
+
+def isBuildType(String type) {
+    project.hasProperty('build.type') && project.property('build.type') == type
 }

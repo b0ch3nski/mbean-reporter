@@ -1,6 +1,7 @@
 package com.github.b0ch3nski.reporter.persistence;
 
 import com.github.b0ch3nski.reporter.http.HttpRequest;
+import com.github.b0ch3nski.reporter.http.HttpRequestException;
 import com.github.b0ch3nski.reporter.model.Measurement;
 import com.github.b0ch3nski.reporter.services.ConfigService;
 import org.slf4j.Logger;
@@ -23,6 +24,12 @@ public class InfluxDB implements MetricsDatabase {
         dbName = config.getValue("dbName", "jvm-metrics");
     }
 
+    private void logDetails(Throwable thr) {
+        if ((LOG.isDebugEnabled()) && (thr instanceof HttpRequestException)) {
+            LOG.debug("Got HTTP response={}", ((HttpRequestException) thr).getResponse());
+        }
+    }
+
     @Override
     public void createDatabase() {
         try {
@@ -32,6 +39,7 @@ public class InfluxDB implements MetricsDatabase {
                     .expectCode(200);
         } catch (IOException e) {
             LOG.warn("Failed to create InfluxDB database name={}, cause={}", dbName, e.getMessage());
+            logDetails(e);
         }
     }
 
@@ -55,6 +63,7 @@ public class InfluxDB implements MetricsDatabase {
                     .expectCode(204);
         } catch (IOException e) {
             LOG.warn("Failed to send measurements to InfluxDB, cause={}", e.getMessage());
+            logDetails(e);
         }
     }
 }

@@ -16,6 +16,10 @@ final class MBeanConnectionHelper {
 
     private MBeanConnectionHelper() { }
 
+    private static void logDetails(Throwable thr) {
+        LOG.debug("MBean connection failed", thr);
+    }
+
     static Stream<MBeanAttributeInfo> getMBeanAttributeInfos(ObjectName mBeanName) {
         try {
             return Arrays.stream(
@@ -23,6 +27,7 @@ final class MBeanConnectionHelper {
             );
         } catch (JMException | IOException e) {
             LOG.warn("Failed to get attribute info for MBean={}, cause={}", mBeanName, e.getMessage());
+            logDetails(e);
             return Stream.empty();
         }
     }
@@ -34,6 +39,7 @@ final class MBeanConnectionHelper {
             );
         } catch (JMException | IOException e) {
             LOG.warn("Failed to get value of attribute={} for MBean={}, cause={}", attrName, mBeanName, e.getMessage());
+            logDetails(e);
             return Optional.empty();
         }
     }
@@ -44,6 +50,7 @@ final class MBeanConnectionHelper {
                     .parallelStream();
         } catch (IOException e) {
             LOG.warn("Failed to query MBeans, cause={}", e.getMessage());
+            logDetails(e);
             return Stream.empty();
         }
     }

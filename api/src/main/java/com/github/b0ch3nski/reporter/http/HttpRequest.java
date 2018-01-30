@@ -40,22 +40,31 @@ public final class HttpRequest {
         return this;
     }
 
-    public String getResponse() throws IOException {
-        try (Scanner scanner = new Scanner(new BufferedInputStream(connection.getInputStream()), CHARSET.name())) {
-            return scanner.next();
-        }
-    }
-
     public int getCode() throws IOException {
         return connection.getResponseCode();
     }
 
-    public void expectCode(int expected) throws IOException {
+    private String getResponse(int code) throws IOException {
+        try (Scanner scanner = new Scanner(
+                new BufferedInputStream(
+                        ((code >= 200) && (code < 300)) ? connection.getInputStream() : connection.getErrorStream()
+                ), CHARSET.name())
+        ) {
+            return scanner.next();
+        }
+    }
+
+    public String getResponse() throws IOException {
+        return getResponse(getCode());
+    }
+
+    public void expectCode(int expected) throws HttpRequestException, IOException {
         int actual = getCode();
 
         if (actual != expected)
-            throw new IOException(
-                    String.format("Got HTTP return code=%d but expected was=%d", actual, expected)
+            throw new HttpRequestException(
+                    String.format("Got HTTP return code=%d but expected was=%d", actual, expected),
+                    getResponse(actual)
             );
     }
 }

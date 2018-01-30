@@ -43,7 +43,7 @@ public final class ConfigService {
                     .ofNullable(System.getenv("HOSTNAME"))
                     .orElse(InetAddress.getLocalHost().getCanonicalHostName());
         } catch (UnknownHostException e) {
-            LOG.warn("Failed to read hostname, cause={}", e.getMessage());
+            LOG.warn("Failed to resolve hostname - returning 'unknown', cause={}", e.getMessage());
             return "unknown";
         }
     }

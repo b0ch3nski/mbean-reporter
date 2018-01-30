@@ -1,6 +1,8 @@
 package com.github.b0ch3nski.reporter.utils;
 
-import com.codahale.metrics.*;
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jmx.JmxReporter;
 import org.junit.rules.ExternalResource;
 
 import javax.management.ObjectName;

@@ -1,6 +1,8 @@
 package com.github.b0ch3nski.reporter.testapp;
 
-import com.codahale.metrics.*;
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jmx.JmxReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +41,7 @@ public final class Main {
                 MetricRegistry.name(Main.class, "test test", "more tests")
         );
 
-        while(true) {
+        while (true) {
             testMeter.mark();
             randomSleep(500, 1500, TimeUnit.MILLISECONDS);
         }

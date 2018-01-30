@@ -50,7 +50,7 @@ public final class ConfigService {
 
     private ConfigService() {
         config = fromEnvAndProps(System::getenv, System::getProperties);
-        config.put("hostname", getHostName());
+        config.putIfAbsent("hostname", getHostName());
 
         LOG.debug("Loaded configuration={}", config);
     }

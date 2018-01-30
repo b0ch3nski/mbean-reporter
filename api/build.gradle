@@ -5,7 +5,7 @@ plugins {
 description = 'mbean-reporter :: api'
 
 dependencies {
-    testCompile libraries.equalsverifier
+    testCompile libraries.equalsVerifier
 }
 
 jar {

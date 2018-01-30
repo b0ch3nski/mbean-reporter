@@ -1,5 +1,9 @@
 import java.text.SimpleDateFormat
 
+plugins {
+    id 'io.spring.dependency-management' version '1.0.4.RELEASE'
+}
+
 allprojects {
     group = 'com.github.b0ch3nski'
     version = isBuildType('release') ?
@@ -8,6 +12,7 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'project-report'
     apply plugin: 'jacoco'
     apply from: "${rootDir}/libraries.gradle"
@@ -15,6 +20,12 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom("io.dropwizard.metrics:metrics-bom:" + METRICS_BOM)
+        }
     }
 
     plugins.withType(JavaPlugin) {

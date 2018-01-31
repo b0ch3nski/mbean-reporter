@@ -9,6 +9,12 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+/**
+ * Transforms MBean metrics from original type {@code ObjectInstance} to flat structure of simplified type
+ * {@code Measurement}, filtering metric types, parameter names, etc.
+ *
+ * @author Piotr Bochenski
+ */
 public final class MBeanProcessingHelper {
 
     private static final List<String> VALID_ATTR_TYPES =
@@ -27,7 +33,8 @@ public final class MBeanProcessingHelper {
 
     private MBeanProcessingHelper() { }
 
-    private static Stream<Measurement> buildMeasuresFromCompData(ObjectName mBeanName, String attrName, CompositeData compData) {
+    private static Stream<Measurement> buildMeasuresFromCompData(ObjectName mBeanName, String attrName,
+                                                                 CompositeData compData) {
         return compData.getCompositeType().keySet().stream()
                 .map(key ->
                         Measurement.builder()
@@ -60,6 +67,11 @@ public final class MBeanProcessingHelper {
                 .flatMap(attribute -> buildMeasurements(mBeanName, attribute));
     }
 
+    /**
+     * Returns all available MBeans filtered, flattened and transformed to {@code Measurement}s.
+     *
+     * @return all metrics as {@code Measurement}s
+     */
     public static Stream<Measurement> getAllMBeansAsMeasurements() {
         return MBeanConnectionHelper.getAllMBeans()
                 .flatMap(mBean -> getMBeanAsMeasurements(mBean.getObjectName()));

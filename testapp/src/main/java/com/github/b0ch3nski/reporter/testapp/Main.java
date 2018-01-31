@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Piotr Bochenski
+ */
 public final class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 

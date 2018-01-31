@@ -7,6 +7,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+/**
+ * Wraps Java {@code HttpURLConnection} API to make it more usable for modern web-related workloads.
+ *
+ * @author Piotr Bochenski
+ */
 public final class HttpRequest {
     private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final int TIMEOUT_MILLIS = 2000;
@@ -20,14 +25,29 @@ public final class HttpRequest {
         connection.setReadTimeout(TIMEOUT_MILLIS);
     }
 
+    /**
+     * Produces {@code HttpRequest} for GET method.
+     *
+     * @param url destination address of the request
+     */
     public static HttpRequest get(String url) throws IOException {
         return new HttpRequest(url, "GET");
     }
 
+    /**
+     * Produces {@code HttpRequest} for POST method.
+     *
+     * @param url destination address of the request
+     */
     public static HttpRequest post(String url) throws IOException {
         return new HttpRequest(url, "POST");
     }
 
+    /**
+     * Fills request content with specified payload.
+     *
+     * @param payload content to be sent
+     */
     public HttpRequest withPayload(String payload) throws IOException {
         byte[] payloadBytes = payload.getBytes(CHARSET);
 
@@ -40,6 +60,9 @@ public final class HttpRequest {
         return this;
     }
 
+    /**
+     * @return HTTP return code for executed request
+     */
     public int getCode() throws IOException {
         return connection.getResponseCode();
     }
@@ -54,10 +77,19 @@ public final class HttpRequest {
         }
     }
 
+    /**
+     * @return server response for executed request
+     */
     public String getResponse() throws IOException {
         return getResponse(getCode());
     }
 
+    /**
+     * Ensures that request return code matches expected code.
+     *
+     * @param expected code that server has to return
+     * @throws HttpRequestException when returned code didn't match expected code
+     */
     public void expectCode(int expected) throws HttpRequestException, IOException {
         int actual = getCode();
 

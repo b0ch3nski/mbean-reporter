@@ -10,6 +10,11 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * Wraps {@code MBeanServerConnection} into more developer-friendly API.
+ *
+ * @author Piotr Bochenski
+ */
 final class MBeanConnectionHelper {
     private static final Logger LOG = LoggerFactory.getLogger(MBeanConnectionHelper.class);
     private static final MBeanServerConnection CONNECTION = ManagementFactory.getPlatformMBeanServer();

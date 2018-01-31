@@ -12,6 +12,9 @@ import java.lang.management.ManagementFactory;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Piotr Bochenski
+ */
 public final class ReportingAgent {
     private static final Logger LOG = LoggerFactory.getLogger(ReportingAgent.class);
     private static final ConfigService CFG = ConfigService.getInstance();

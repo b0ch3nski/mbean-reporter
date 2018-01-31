@@ -6,6 +6,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Simplified metric representation that consists of {@code name}, {@code value} and its {@code type}.
+ *
+ * @author Piotr Bochenski
+ */
 public final class Measurement {
     private final String name;
     private final Class<?> type;
@@ -17,6 +22,11 @@ public final class Measurement {
         value = builder.value;
     }
 
+    /**
+     * Instantiates {@code Measurement} class using fluent builder.
+     *
+     * @return new {@code MeasurementBuilder} instance
+     */
     public static MeasurementBuilder builder() {
         return new MeasurementBuilder();
     }
@@ -78,6 +88,12 @@ public final class Measurement {
             );
         }
 
+        /**
+         * Builds {@code Measurement} with name consisting of original MBean object name and optional elements.
+         *
+         * @param mBeanName         original MBean object name
+         * @param additionalElement optional elements appended at the end
+         */
         public MeasurementBuilder withName(ObjectName mBeanName, String... additionalElement) {
             name = SPACE_PATTERN.matcher(
                     Stream.concat(
@@ -92,12 +108,22 @@ public final class Measurement {
             return this;
         }
 
+        /**
+         * Builds {@code Measurement} with specified value (type is discovered automatically).
+         *
+         * @param attrValue metric value
+         */
         public MeasurementBuilder withValue(Object attrValue) {
             type = attrValue.getClass();
             value = String.valueOf(attrValue);
             return this;
         }
 
+        /**
+         * Finalizing method that produces new instance of {@code Measurement}.
+         *
+         * @return built {@code Measurement} object
+         */
         public Measurement build() {
             return new Measurement(this);
         }

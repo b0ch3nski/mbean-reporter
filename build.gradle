@@ -60,6 +60,10 @@ subprojects {
 
         javadoc.failOnError = true
 
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+
         task javadocJar(type: Jar, dependsOn: javadoc) {
             baseName = rootProject.name + '-' + project.name
             classifier = 'javadoc'

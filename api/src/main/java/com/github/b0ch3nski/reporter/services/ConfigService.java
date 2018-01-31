@@ -13,6 +13,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Provides easy access to runtime configuration which is created from environment variables and Java execution
+ * properties (override supported). Variable name must start with 'reporter' prefix (case insensitive) and
+ * dot/underscore, e.g. REPORTER_NAME=test, reporter.name=test, etc.
+ *
+ * @author Piotr Bochenski
+ */
 public final class ConfigService {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigService.class);
     private static final Pattern KEY_PATTERN = Pattern.compile("^reporter[_.]+", Pattern.CASE_INSENSITIVE);
@@ -55,16 +62,35 @@ public final class ConfigService {
         LOG.debug("Loaded configuration={}", config);
     }
 
+    /**
+     * Provides access to {@code ConfigService} class.
+     *
+     * @return new class instance if it was not initialized before, otherwise initializes global singleton
+     */
     public static synchronized ConfigService getInstance() {
         if (service == null)
             service = new ConfigService();
         return service;
     }
 
+    /**
+     * Returns value for specified config {@code key} if it exists, otherwise returns provided {@code defVal}.
+     *
+     * @param key    config key to look for
+     * @param defVal default value that is returned when {@code key} doesn't exist
+     * @return value of specified key, or {@code defVal} when not found
+     */
     public String getValue(String key, String defVal) {
         return config.getOrDefault(key.toLowerCase(), defVal);
     }
 
+    /**
+     * Returns value for specified config {@code key} if it exists, otherwise returns provided {@code defVal}.
+     *
+     * @param key    config key to look for
+     * @param defVal default value that is returned when {@code key} doesn't exist
+     * @return value of specified key, or {@code defVal} when not found
+     */
     public long getValue(String key, long defVal) {
         try {
             return Long.valueOf(config.get(key.toLowerCase()));

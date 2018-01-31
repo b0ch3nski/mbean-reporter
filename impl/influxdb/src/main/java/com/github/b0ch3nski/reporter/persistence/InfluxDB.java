@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @author Piotr Bochenski
+ */
 public class InfluxDB implements MetricsDatabase {
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDB.class);
     private final String hostName;

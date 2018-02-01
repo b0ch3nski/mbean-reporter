@@ -15,8 +15,12 @@ import java.util.stream.Stream;
 
 /**
  * Provides easy access to runtime configuration which is created from environment variables and Java execution
- * properties (override supported). Variable name must start with 'reporter' prefix (case insensitive) and
- * dot/underscore, e.g. REPORTER_NAME=test, reporter.name=test, etc.
+ * properties (override supported). Variable name must start with {@code reporter} prefix followed by dot/underscore and
+ * configuration key name (all case insensitive), for example:
+ * <ul>
+ * <li>environment variable {@code REPORTER_NAME=test} will result in {@code name=test} configuration</li>
+ * <li>execution property {@code -Dreporter.dataBase=test} will result in {@code database=test} configuration</li>
+ * </ul>
  *
  * @author Piotr Bochenski
  */

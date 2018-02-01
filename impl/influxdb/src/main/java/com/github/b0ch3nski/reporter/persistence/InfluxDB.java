@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Example implementation of {@code MetricsDatabase} for InfluxDB.
+ *
  * @author Piotr Bochenski
  */
 public class InfluxDB implements MetricsDatabase {
@@ -20,6 +22,13 @@ public class InfluxDB implements MetricsDatabase {
     private final String dbUrl;
     private final String dbName;
 
+    /**
+     * Following configuration is supported:
+     * <ul>
+     * <li>{@code dbUrl} - URL of InfluxDB instance, default: {@code http://localhost:8086}</li>
+     * <li>{@code dbName} - Database name where metrics will be sent, default: {@code jvm-metrics}</li>
+     * </ul>
+     */
     public InfluxDB() {
         ConfigService config = ConfigService.getInstance();
         hostName = config.getValue("hostName", "unknown");

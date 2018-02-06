@@ -1,12 +1,12 @@
 ext {
-    METRICS_BOM = "4.0.2"
+    METRICS_VERSION = '4.0.2'
 
     libraries = [
-            slf4j         : "org.slf4j:slf4j-api:1.7.25",
-            logback       : "ch.qos.logback:logback-classic:1.2.3",
-            metrics       : "io.dropwizard.metrics:metrics-jmx",
-            junit         : "junit:junit:4.12",
-            assertj       : "org.assertj:assertj-core:3.9.0",
-            equalsVerifier: "nl.jqno.equalsverifier:equalsverifier:2.4.2"
+            slf4j         : 'org.slf4j:slf4j-api:1.7.25',
+            logback       : 'ch.qos.logback:logback-classic:1.2.3',
+            metrics       : "io.dropwizard.metrics:metrics-jmx:${METRICS_VERSION}",
+            junit         : 'junit:junit:4.12',
+            assertj       : 'org.assertj:assertj-core:3.9.0',
+            equalsVerifier: 'nl.jqno.equalsverifier:equalsverifier:2.4.2'
     ]
 }

@@ -24,7 +24,10 @@ example:
 * environment variable `REPORTER_NAME=test` will result in `name=test` configuration
 * execution property `-Dreporter.dataBase=test` will result in `database=test` configuration
 
-`interval` configuration key is available by default in `mbean-reporter-agent` to control reporting period (in seconds).
+Configuration keys available by default in `mbean-reporter-agent`:
+* `interval` - reporting period in seconds, default: 10
+* `dbImpl` - fully qualified class name of `MetricsDatabase` implementation, default:
+`com.github.b0ch3nski.reporter.persistence.InfluxDB`
 
 ### mbean-reporter-influxdb
 Example implementation of `mbean-reporter-api` for InfluxDB. Following configuration is supported:

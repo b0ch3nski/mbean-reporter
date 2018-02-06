@@ -8,7 +8,7 @@ allprojects {
     group = 'com.github.b0ch3nski'
     version = isBuildType('release') ?
             file("${rootDir}/VERSION").text.trim() :
-            new SimpleDateFormat("yyyyMMddhhmmss").format(new Date())
+            new SimpleDateFormat('yyyyMMddhhmmss').format(new Date())
 }
 
 subprojects {
@@ -24,7 +24,7 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom("io.dropwizard.metrics:metrics-bom:" + METRICS_BOM)
+            mavenBom("io.dropwizard.metrics:metrics-bom:${METRICS_VERSION}")
         }
     }
 
@@ -35,25 +35,25 @@ subprojects {
             options.fork = true
             options.encoding = 'UTF-8'
             options.compilerArgs \
-                << "-Xlint:all" \
-                << "-Werror"
+                << '-Xlint:all' \
+                << '-Werror'
         }
 
         test {
             testLogging {
-                events "failed"
+                events 'failed'
                 showExceptions true
-                exceptionFormat "full"
+                exceptionFormat 'full'
                 showCauses true
                 showStackTraces true
                 showStandardStreams true
             }
         }
 
-        jar.baseName = rootProject.name + '-' + project.name
+        jar.baseName = "${rootProject.name}-${project.name}"
 
         task sourcesJar(type: Jar, dependsOn: classes) {
-            baseName = rootProject.name + '-' + project.name
+            baseName = "${rootProject.name}-${project.name}"
             classifier = 'sources'
             from sourceSets.main.allSource
         }
@@ -65,7 +65,7 @@ subprojects {
         }
 
         task javadocJar(type: Jar, dependsOn: javadoc) {
-            baseName = rootProject.name + '-' + project.name
+            baseName = "${rootProject.name}-${project.name}"
             classifier = 'javadoc'
             from javadoc
         }

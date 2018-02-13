@@ -1,7 +1,6 @@
 package com.github.b0ch3nski.reporter.persistence;
 
 import com.github.b0ch3nski.reporter.http.HttpRequest;
-import com.github.b0ch3nski.reporter.http.HttpRequestException;
 import com.github.b0ch3nski.reporter.model.Measurement;
 import com.github.b0ch3nski.reporter.services.ConfigService;
 import org.slf4j.Logger;
@@ -36,22 +35,16 @@ public class InfluxDB implements MetricsDatabase {
         dbName = config.getValue("dbName", "jvm-metrics");
     }
 
-    private void logDetails(Throwable thr) {
-        if ((LOG.isDebugEnabled()) && (thr instanceof HttpRequestException)) {
-            LOG.debug("Got HTTP response={}", ((HttpRequestException) thr).getResponse());
-        }
-    }
-
     @Override
-    public void createDatabase() {
+    public void createDatabase() throws MetricsDatabaseException {
         try {
             HttpRequest
                     .post(String.format("%s/query", dbUrl))
                     .withPayload(String.format("q=CREATE DATABASE \"%s\"", dbName))
                     .expectCode(200);
         } catch (IOException e) {
-            LOG.warn("Failed to create InfluxDB database name={}, cause={}", dbName, e.getMessage());
-            logDetails(e);
+            throw new MetricsDatabaseException(
+                    String.format("Failed to create InfluxDB database name=%s, cause=%s", dbName, e.getMessage()), e);
         }
     }
 
@@ -61,7 +54,7 @@ public class InfluxDB implements MetricsDatabase {
     }
 
     @Override
-    public void sendMeasurements(Stream<Measurement> measurements) {
+    public void sendMeasurements(Stream<Measurement> measurements) throws MetricsDatabaseException {
         String payload = measurements
                 .map(this::convert)
                 .collect(Collectors.joining("\n"));
@@ -74,8 +67,8 @@ public class InfluxDB implements MetricsDatabase {
                     .withPayload(payload)
                     .expectCode(204);
         } catch (IOException e) {
-            LOG.warn("Failed to send measurements to InfluxDB, cause={}", e.getMessage());
-            logDetails(e);
+            throw new MetricsDatabaseException(
+                    String.format("Failed to send measurements to InfluxDB, cause=%s", e.getMessage()), e);
         }
     }
 }

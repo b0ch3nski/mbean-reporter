@@ -12,11 +12,15 @@ import java.util.stream.Stream;
 public interface MetricsDatabase {
     /**
      * Creates appropriate structure, e.g. database, table, schema, etc. that will be used for metrics storage.
+     *
+     * @throws MetricsDatabaseException when failed
      */
-    void createDatabase();
+    void createDatabase() throws MetricsDatabaseException;
 
     /**
      * Sends metrics to database.
+     *
+     * @throws MetricsDatabaseException when failed
      */
-    void sendMeasurements(Stream<Measurement> measurements);
+    void sendMeasurements(Stream<Measurement> measurements) throws MetricsDatabaseException;
 }

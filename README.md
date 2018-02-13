@@ -50,8 +50,8 @@ gradle clean build -Pbuild.type=release
 ## usage
 ```bash
 java \
--javaagent:mbean-reporter-agent-0.1.jar \
--cp <<YOUR_CLASSPATH>>:mbean-reporter-api-0.1.jar:mbean-reporter-influxdb-0.1.jar \
+-javaagent:mbean-reporter-agent-0.2.jar \
+-cp <<YOUR_CLASSPATH>>:mbean-reporter-api-0.2.jar:mbean-reporter-influxdb-0.2.jar \
 your.package.your.main.class
 ```
 
@@ -59,19 +59,24 @@ your.package.your.main.class
 For testing purposes, one might try running `mbean-reporter-testapp` which is producing meaningless
 `metrics.com.github.b0ch3nski.reporter.testapp.Main.test_test.more_tests` metric using `io.dropwizard.metrics`:
 ```bash
-docker run -d -p 8086:8086 --name=influxdb influxdb:1.4.3-alpine; \
+docker run -d -p 8086:8086 --name=influxdb influxdb:alpine; \
 java \
--javaagent:agent/build/libs/mbean-reporter-agent-0.1.jar \
--cp testapp/build/libs/mbean-reporter-testapp-0.1.jar:api/build/libs/mbean-reporter-api-0.1.jar:impl/influxdb/build/libs/mbean-reporter-influxdb-0.1.jar \
+-javaagent:agent/build/libs/mbean-reporter-agent-0.2.jar \
+-cp testapp/build/libs/mbean-reporter-testapp-0.2.jar:api/build/libs/mbean-reporter-api-0.2.jar:impl/influxdb/build/libs/mbean-reporter-influxdb-0.2.jar \
 -DrootLogLevel=DEBUG \
 com.github.b0ch3nski.reporter.testapp.Main
 ```
 
-After a while, dummy metric should be visible in InfluxDB alongside other standard JVM metrics, like
+After a while, dummy metric should be visible in **InfluxDB** alongside other standard JVM metrics, like
 `java.lang.Memory.HeapMemoryUsage.used`:
 ```bash
 curl -Gi "http://localhost:8086/query?pretty=true" --data-urlencode "db=jvm-metrics" --data-urlencode "q=SHOW MEASUREMENTS"
 curl -Gi "http://localhost:8086/query?pretty=true" --data-urlencode "db=jvm-metrics" --data-urlencode "q=SELECT * FROM \"metrics.com.github.b0ch3nski.reporter.testapp.Main.test_test.more_tests.Count\""
+```
+
+Simple data visualization is possible using **Grafana**:
+```bash
+docker run -d -p 3000:3000 --link=influxdb -e INFLUXDB_HOST=influxdb --name=grafana appcelerator/grafana
 ```
 
 For additional verification, one can enable remote JMX interface to compare results with live view using `JConsole` or

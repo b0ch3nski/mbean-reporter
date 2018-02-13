@@ -5,7 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
+import java.util.stream.Collectors;
 
 /**
  * Wraps Java {@code HttpURLConnection} API to make it more usable for modern web-related workloads.
@@ -68,12 +68,13 @@ public final class HttpRequest {
     }
 
     private String getResponse(int code) throws IOException {
-        try (Scanner scanner = new Scanner(
-                new BufferedInputStream(
-                        ((code >= 200) && (code < 300)) ? connection.getInputStream() : connection.getErrorStream()
-                ), CHARSET.name())
-        ) {
-            return scanner.next();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        ((code >= 200) && (code < 300)) ? connection.getInputStream() : connection.getErrorStream(),
+                        CHARSET
+                )
+        )) {
+            return reader.lines().collect(Collectors.joining("\n"));
         }
     }
 
